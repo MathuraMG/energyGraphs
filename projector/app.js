@@ -28,11 +28,11 @@ function InitChart() {
     var totalEnergy = 0;
     var totalEnergyWasted = 0;
     var temp = 'text-' + i;
-    // console.log(data[i]);
+    var key = data[i]["data"]["names"][0];
     document.getElementById(temp).innerHTML = data[i]["name"];
     var id = "#visualisation-" + i;
-    var yMin = d3.min(data[i]["data"]["data"], function (d) { return d.Lights; }),
-    yMax = d3.max(data[i]["data"]["data"], function (d) { return d.Lights; });
+    var yMin = d3.min(data[i]["data"]["data"], function (d) { return d[key]; }),
+    yMax = d3.max(data[i]["data"]["data"], function (d) { return d[key]; });
 
     var vis = d3.select(id),
         WIDTH = 2000,
@@ -67,12 +67,12 @@ function InitChart() {
             return xScale(d3.time.hour.offset(formatYear(d.x), -5));
         })
         .y(function(d) {
-            totalEnergy += d.Lights;
+            totalEnergy += d[key];
 
             if(occup_key[d3.time.hour.offset(formatYear(d.x), -5)]===0) {
-              totalEnergyWasted += d.Lights;
+              totalEnergyWasted += d[key];
             }
-            return yScale(d.Lights);
+            return yScale(d[key]);
         })
         .interpolate("basis");
 
@@ -98,7 +98,6 @@ function InitChart() {
         .attr('stroke-width', 1)
         .attr('fill', 'none');
 
-      // console.log(totalEnergy);
       floorEnergy += totalEnergy;
       floorEnergyWasted += totalEnergyWasted;
       document.getElementById(temp).append(" - " +totalEnergy.toFixed(2) + " kWh");
@@ -106,7 +105,6 @@ function InitChart() {
     }
     document.getElementById('floorEnergy').innerHTML = "Total Energy - " + floorEnergy.toFixed(2) + " kWh";
     document.getElementById('floorEnergyWasted').innerHTML = "Total Energy used in off hours - " + floorEnergyWasted.toFixed(2) + " kWh";
-
 
 }
 window.onload = function() {
